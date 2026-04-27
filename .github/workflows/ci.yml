@@ -5,18 +5,23 @@ on:
   pull_request:
 
 jobs:
-  # Jobul 1: Rulează testele matematice
+  # Jobul 1: Testare pe mai multe versiuni simultan (Matrix)
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Aici definim versiunile. GitHub va crea automat 3 joburi separate!
+        python-version: ["3.10", "3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          # Variabila de mai jos ia pe rând valorile din matrix
+          python-version: ${{ matrix.python-version }}
       - run: pip install pytest
       - run: pytest -q
 
-  # Jobul 2 (NOU): Rulează în același timp cu "test" și verifică formatarea codului
+  # Jobul 2: Verificarea codului rămâne normală, pe o singură mașină
   lint:
     runs-on: ubuntu-latest
     steps:
